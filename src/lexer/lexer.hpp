@@ -8,21 +8,22 @@
 #include "token.hpp"
 #include "word.hpp"
 #include "num.hpp"
+#include "real.hpp"
 
 class Lexer {
 public:
-    int line = 1;
+    static int line;
     char peek = ' ';
-    std::map<std::string, Word> words;
-    void reserve(Word w) {
-        words.emplace(w.lexeme, w);
+    std::map<std::string, Word*> words;
+    void reserve(Word *w) {
+        words[w->lexeme] = w;
     }
     Lexer() {
-        reserve(Word("if", Tag::IF));
-        reserve(Word("else", Tag::ELSE));
-        reserve(Word("while", Tag::WHILE));
-        reserve(Word("do", Tag::DO));
-        reserve(Word("break", Tag::BREAK));
+        reserve(new Word("if", Tag::IF));
+        reserve(new Word("else", Tag::ELSE));
+        reserve(new Word("while", Tag::WHILE));
+        reserve(new Word("do", Tag::DO));
+        reserve(new Word("break", Tag::BREAK));
         reserve(Word::True);
         reserve(Word::False);
     }
@@ -38,7 +39,7 @@ public:
         return true;
     }
 
-    Token scan() {
+    Token* scan() {
         for (; ; readch()) {
             if (peek == ' ' || peek == '\t') continue;
             if (peek == '\n') line++;
@@ -47,22 +48,22 @@ public:
         switch (peek) {
             case '&':
                 if (readch('&')) return Word::And;
-                else return Token('&');
+                else return new Token('&');
             case '|':
                 if (readch('|')) return Word::Or;
-                else return Token('|');
+                else return new Token('|');
             case '=':
-                if (readch('=')) return Word::eq;
-                else return Token('=');
+                if (readch('=')) return Word::Eq;
+                else return new Token('=');
             case '!':
-                if (readch('=')) return Word::ne;
-                else return Token('!');
+                if (readch('=')) return Word::Ne;
+                else return new Token('!');
             case '<':
-                if (readch('=')) return Word::le;
-                else return Token('<');
+                if (readch('=')) return Word::Le;
+                else return new Token('<');
             case '>':
-                if (readch('=')) return Word::ge;
-                else return Token('>');
+                if (readch('=')) return Word::Ge;
+                else return new Token('>');
         }
         if (peek >= '0' && peek <= '9') {
             int v = 0;
@@ -71,7 +72,7 @@ public:
                 readch();
             } while (peek >= '0' && peek <= '9');
         
-            if (peek != '.') return Num(v);
+            if (peek != '.') return new Num(v);
             float x = v, d = 10;
             for (; ;) {
                 readch();
@@ -79,7 +80,7 @@ public:
                 x += (peek - '0') / d;
                 d *= 10;
             }
-            return Real(x);
+            return new Real(x);
         }
         if ((peek >= 'a' && peek <= 'z') || (peek >= 'A' && peek <= 'Z')) {
             std::string buffer;
@@ -89,14 +90,16 @@ public:
             } while (peek >= 'a' && peek <= 'z' || peek >= 'A' && peek <= 'Z' || peek >= '0' && peek <= '9');
             auto it = words.find(buffer);
             if (it != words.end()) return it->second;
-            Word w = Word(buffer, Tag::ID);
-            words.emplace(buffer, w);
+            Word *w = new Word(buffer, Tag::ID);
+            words[buffer] = w;
             return w;
         }
-        Token t = Token(peek);
+        Token *t = new Token(peek);
         peek = ' ';
         return t;
     }
 };
+
+int Lexer::line = 1;
 
 #endif

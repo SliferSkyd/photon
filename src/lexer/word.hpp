@@ -12,18 +12,18 @@ public:
     std::string toString() {
         return lexeme;
     }
-    static Word And, Or, eq, ne, le, ge, minus, True, False, temp;
+    static Word *And, *Or, *Eq, *Ne, *Le, *Ge, *Minus, *True, *False, *Temp;
 };
 
-Word Word::And("&&", Tag::AND);
-Word Word::Or("||", Tag::OR);
-Word Word::eq("==", Tag::EQ);
-Word Word::ne("!=", Tag::NE);
-Word Word::le("<=", Tag::LE);
-Word Word::ge(">=", Tag::GE);
-Word Word::minus("minus", Tag::MINUS);
-Word Word::True("true", Tag::TRUE);
-Word Word::False("false", Tag::FALSE);
-Word Word::temp("temp", Tag::TEMP);
+Word *Word::And = new Word("&&", Tag::AND);
+Word *Word::Or = new Word("||", Tag::OR);
+Word *Word::Eq = new Word("==", Tag::EQ);
+Word *Word::Ne = new Word("!=", Tag::NE);
+Word *Word::Le = new Word("<=", Tag::LE);
+Word *Word::Ge = new Word(">=", Tag::GE);
+Word *Word::Minus = new Word("minus", Tag::MINUS);
+Word *Word::True = new Word("true", Tag::TRUE);
+Word *Word::False = new Word("false", Tag::FALSE);
+Word *Word::Temp = new Word("t", Tag::TEMP);
 
 #endif
