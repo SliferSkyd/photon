@@ -7,7 +7,7 @@ class Token {
 public:
     const int tag;
     Token(int t) : tag(t) {}
-    std::string toString() {
+    virtual std::string toString() {
         return std::string(1, (char) tag);
     }
 };
