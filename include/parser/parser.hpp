@@ -28,6 +28,7 @@
 #include "../inter/constant.hpp"
 #include "../inter/arith.hpp"
 #include "../inter/else.hpp"
+#include "../inter/for.hpp"
 
 class Parser {
     Lexer *lex;
@@ -42,7 +43,6 @@ public:
 
     void move() {
         look = lex->scan();
-        std::cout << look->toString() << '\n';
     }
 
     void error(std::string s) {
@@ -70,7 +70,7 @@ public:
         match('{');
         Env *savedEnv = top;
         top = new Env(*top);
-        decls();
+        // decls();
         Stmt *s = stmts();
         match('}');
         top = savedEnv;
@@ -78,7 +78,6 @@ public:
     }
 
     void decls() {
-        std::cout << look->tag << '\n';
         while (look->tag == Tag::BASIC) {
             Type *p = type();
             Token *tok = look;
@@ -121,15 +120,34 @@ public:
 
     Stmt* stmt() {
         Expr *x;
-        Stmt *s, *s1, *s2;
+        Stmt *s, *s1, *s2, *s3;
         Stmt *savedStmt;
         While *whilenode;
         Do *donode;
-        std::cout << "stmt: " << look->tag << "\n";
+        For *fornode;
+        
         switch (look->tag) {
             case ';':
                 move();
                 return Stmt::Null;
+            case Tag::BASIC: {
+                Type *p = type();
+                Token *tok = look;
+                match(Tag::ID);
+                Id *id = new Id((Word*)tok, p, used);
+                top->put(tok, id);
+                used = used + p->width;
+                if (look->tag == '=') {
+                    move();
+                    s = new Set(id, boolean());
+                    match(';');
+                    return s;
+                } else {
+                    match(';');
+                    s = new Set(id);
+                    return s;
+                }
+            }
             case Tag::IF:
                 match(Tag::IF); match('('); x = boolean(); match(')');
                 s1 = stmt();
@@ -154,6 +172,17 @@ public:
                 donode->init(s1, x);
                 Stmt::Enclosing = savedStmt;
                 return donode;
+            case Tag::FOR:
+                fornode = new For();
+                savedStmt = Stmt::Enclosing; Stmt::Enclosing = fornode;
+                match(Tag::FOR); match('(');
+                s1 = stmt(); 
+                s2 = stmt(); 
+                x = boolean(); match(')');
+                s3 = stmt();
+                fornode->init(s1, x, s2, s3);
+                Stmt::Enclosing = savedStmt;
+                return fornode;
             case Tag::BREAK:
                 match(Tag::BREAK); match(';');
                 return new Break();
@@ -168,7 +197,6 @@ public:
         Stmt *stmt;
         Token *t = look;
         match(Tag::ID);
-        std::cout << "assign: " << look->tag << "\n";
         Id* id = top->get(t);
         if (id == nullptr) {
             error(t->toString() + " undeclared");

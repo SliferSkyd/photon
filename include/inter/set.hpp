@@ -4,6 +4,7 @@
 #include "stmt.hpp"
 #include "id.hpp"
 #include "expr.hpp"
+#include "constant.hpp"
 
 class Set : public Stmt {
 public:
@@ -14,6 +15,19 @@ public:
         id = i;
         expr = x;
         if (check(id->type, expr->type) == NULL) {
+            error("type error");
+        }
+    }
+
+    Set(Id *i) {
+        id = i;
+        if (i->type == Type::Int) {
+            expr = new Expr(new Num(0), Type::Int);
+        } else if (i->type == Type::Float) {
+            expr = new Expr(new Real(0.0), Type::Float);
+        } else if (i->type == Type::Bool) {
+            expr = new Expr((Token*)Constant::False, Type::Bool);
+        } else {
             error("type error");
         }
     }
