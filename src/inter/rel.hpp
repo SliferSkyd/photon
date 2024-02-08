@@ -2,6 +2,7 @@
 #define __REL_HPP__
 
 #include "logical.hpp"
+#include "../symbols/array.hpp"
 
 class Rel : public Logical {
 public:

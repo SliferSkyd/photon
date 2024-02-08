@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include "parser/parser.hpp"
 
 int main(int argc, char** argv) {
     if (argc < 2) {
@@ -14,9 +15,17 @@ int main(int argc, char** argv) {
             content += line + "\n";
         }
         file.close();
-        std::cout << content << '\n';
     } else {
         std::cerr << "Unable to open file " << argv[1] << std::endl;
         return EXIT_FAILURE;
     }
-}
+    Lexer *lexer = new Lexer();
+    Parser *parser = new Parser(lexer);
+    try {
+        parser->program();
+        std::cout << "Compilation successful" << std::endl;
+    } catch (std::runtime_error &e) {
+        std::cerr << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
+}   

@@ -12,7 +12,7 @@ public:
         expr = NULL;
         stmt = NULL;
     }
-    void init(Expr *x, Stmt *s) {
+    void init(Stmt *s, Expr *x) {
         expr = x;
         stmt = s;
         if (expr->type != Type::Bool) {
