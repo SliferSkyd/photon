@@ -10,7 +10,7 @@ class Env {
 public:
     std::map<Token*, Id*> table;
     Env* prev;
-    Env(Env* n) : prev(n) {}
+    Env(Env &n) : prev(&n) {}
     void put(Token *t, Id *i) {
         table[t] = i;
     }

@@ -7,13 +7,14 @@
 class Logical : public Expr {
 public:
     Expr *expr1, *expr2;
-    Logical(Token *tok, Expr *x1, Expr *x2) : Expr(tok, nullptr), expr1(x1), expr2(x2) {
+    Logical(Token *tok, Expr *x1, Expr *x2) : Expr(tok, nullptr), expr1(x1), expr2(x2) {}
+    void setType() {
         type = check(expr1->type, expr2->type);
         if (type == nullptr) {
             error("type error");
         }
     }
-    Type* check(Type *p1, Type *p2) {
+    virtual Type* check(Type *p1, Type *p2) {
         if (p1 == Type::Bool && p2 == Type::Bool) {
             return Type::Bool;
         } else {

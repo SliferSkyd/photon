@@ -13,7 +13,7 @@ public:
     Set(Id *i, Expr *x) {
         id = i;
         expr = x;
-        if (check(id->type, expr->type) == nullptr) {
+        if (check(id->type, expr->type) == NULL) {
             error("type error");
         }
     }
@@ -21,7 +21,7 @@ public:
     Type* check(Type *p1, Type *p2) {
         if (Type::numeric(p1) && Type::numeric(p2)) return p2;
         else if (p1 == Type::Bool && p2 == Type::Bool) return p2;
-        else return nullptr;
+        else return NULL;
     }
 
     void gen(int b, int a) {

@@ -16,4 +16,6 @@ public:
     }
 };
 
+int Temp::count = 0;
+
 #endif

@@ -5,9 +5,10 @@
 #include "expr.hpp"
 
 class Do : public Stmt {
-public:
+private:
     Expr *expr;
     Stmt *stmt;
+public:
     Do() {
         expr = NULL;
         stmt = NULL;

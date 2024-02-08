@@ -8,9 +8,7 @@
 
 class Op : public Expr {
 public:
-    Token *op;
-    Type *type;
-    Op(Token *tok, Type *p) : Expr(tok, p), op(tok), type(p) {}
+    Op(Token *tok, Type *p) : Expr(tok, p) {}
     Expr* reduce() {
         Expr *x = gen();
         Temp *t = new Temp(type);

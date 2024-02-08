@@ -13,6 +13,7 @@ public:
     
     Expr(Token *tok, Type *p) : op(tok), type(p) {}
 
+    virtual void setType() {}
     virtual Expr* gen() {
         return this;
     }
@@ -29,7 +30,7 @@ public:
         } else if (t != 0) emit("if " + test + " goto L" + std::to_string(t));
         else if (f != 0) emit("iffalse " + test + " goto L" + std::to_string(f));
     }
-    std::string toString() {
+    virtual std::string toString() {
         return op->toString();
     }
 };

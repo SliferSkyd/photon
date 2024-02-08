@@ -9,6 +9,10 @@
 #include "word.hpp"
 #include "num.hpp"
 #include "real.hpp"
+#include "../symbols/type.hpp"
+#include <fstream>
+
+#define BUF_SIZE 1024
 
 class Lexer {
 public:
@@ -18,7 +22,14 @@ public:
     void reserve(Word *w) {
         words[w->lexeme] = w;
     }
-    Lexer() {
+    int read = 0;
+    std::ifstream *ifs;
+    char *buffer;
+    char *pointer;
+
+    Lexer(std::string path) {
+        ifs = new std::ifstream(path);
+        if (!ifs->good()) throw std::runtime_error("File not found");
         reserve(new Word("if", Tag::IF));
         reserve(new Word("else", Tag::ELSE));
         reserve(new Word("while", Tag::WHILE));
@@ -26,10 +37,33 @@ public:
         reserve(new Word("break", Tag::BREAK));
         reserve(Word::True);
         reserve(Word::False);
+        reserve(Type::Int);
+        reserve(Type::Char);
+        reserve(Type::Bool);
+        reserve(Type::Float);
+
+        buffer = new char[BUF_SIZE+1];
+        peek = ' ';
+        pointer = buffer;
+        buffer[BUF_SIZE] = EOF;
+        fillBuffer();
+    }
+
+    void fillBuffer() {
+        if (ifs->eof()) return;
+        pointer = buffer;
+
+        ifs->read(buffer, BUF_SIZE);
+        if (ifs->eof()) {
+            buffer[ifs->gcount()] = EOF;
+            ifs->close();
+        }
     }
 
     void readch() {
-        peek = getchar();
+        if (*pointer == EOF) fillBuffer();
+        if (*pointer == EOF) peek = EOF;
+        else peek = *pointer++;
     }
 
     bool readch(char c) {

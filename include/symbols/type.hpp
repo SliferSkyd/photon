@@ -17,7 +17,7 @@ public:
     static Type *Int, *Float, *Char, *Bool;
 
     static bool numeric(Type *p) {
-        return p == Type::Char || p == Type::Int || p == Type::Float;
+        return (p == Type::Char || p == Type::Int || p == Type::Float);
     }
 
     static Type* max(Type *p1, Type *p2) {

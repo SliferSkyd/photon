@@ -4,6 +4,7 @@
 #include "stmt.hpp"
 #include "id.hpp"
 #include "expr.hpp"
+#include "access.hpp"
 #include "../symbols/array.hpp"
 
 class SetElm : public Stmt {

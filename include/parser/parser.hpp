@@ -27,12 +27,13 @@
 #include "../inter/unary.hpp"
 #include "../inter/constant.hpp"
 #include "../inter/arith.hpp"
+#include "../inter/else.hpp"
 
 class Parser {
     Lexer *lex;
     Token *look;
 public:
-    Env top = nullptr;
+    Env *top = nullptr;
     int used = 0;
 
     Parser(Lexer *l) : lex(l) {
@@ -41,6 +42,7 @@ public:
 
     void move() {
         look = lex->scan();
+        std::cout << look->toString() << '\n';
     }
 
     void error(std::string s) {
@@ -51,7 +53,7 @@ public:
         if (look->tag == t) {
             move();
         } else {
-            error("syntax error");
+            error("syntax error: " + look->toString() + " found when " + std::to_string(t) + " expected;");
         }
     }
 
@@ -66,8 +68,8 @@ public:
 
     Stmt* block() {
         match('{');
-        Env savedEnv = top;
-        top = new Env(top);
+        Env *savedEnv = top;
+        top = new Env(*top);
         decls();
         Stmt *s = stmts();
         match('}');
@@ -76,13 +78,14 @@ public:
     }
 
     void decls() {
+        std::cout << look->tag << '\n';
         while (look->tag == Tag::BASIC) {
             Type *p = type();
             Token *tok = look;
             match(Tag::ID);
             match(';');
             Id *id = new Id((Word*)tok, p, used);
-            top.put(tok, id);
+            top->put(tok, id);
             used = used + p->width;
         }
     }
@@ -120,7 +123,9 @@ public:
         Expr *x;
         Stmt *s, *s1, *s2;
         Stmt *savedStmt;
-
+        While *whilenode;
+        Do *donode;
+        std::cout << "stmt: " << look->tag << "\n";
         switch (look->tag) {
             case ';':
                 move();
@@ -131,15 +136,17 @@ public:
                 if (look->tag != Tag::ELSE) return new If(x, s1);
                 match(Tag::ELSE); 
                 s2 = stmt();
-            case Tag::WHILE:
-                While *whilenode = new While();
+                return new Else(x, s1, s2);
+            case Tag::WHILE: 
+                whilenode = new While();
                 savedStmt = Stmt::Enclosing; Stmt::Enclosing = whilenode;
                 match(Tag::WHILE); match('('); x = boolean(); match(')');
                 s1 = stmt();
                 whilenode->init(x, s1);
-                Stmt::Enclosing = whilenode;
+                Stmt::Enclosing = savedStmt;
+                return whilenode;
             case Tag::DO:
-                Do *donode = new Do();
+                donode = new Do();
                 savedStmt = Stmt::Enclosing; Stmt::Enclosing = donode;
                 match(Tag::DO);
                 s1 = stmt();
@@ -161,7 +168,8 @@ public:
         Stmt *stmt;
         Token *t = look;
         match(Tag::ID);
-        Id* id = top.get(t);
+        std::cout << "assign: " << look->tag << "\n";
+        Id* id = top->get(t);
         if (id == nullptr) {
             error(t->toString() + " undeclared");
         }
@@ -183,51 +191,66 @@ public:
             Token *tok = look;
             move();
             x = new Or(tok, x, join());
+            x->setType();
         }
         return x;
     }
+    
     Expr* join() {
         Expr *x = equality();
         while (look->tag == Tag::AND) {
             Token *tok = look;
             move();
             x = new And(tok, x, equality());
+            x->setType();
         }
         return x;
     }
+
     Expr* equality() {
         Expr* x = rel();
         while (look->tag == Tag::EQ || look->tag == Tag::NE) {
             Token *tok = look;
             move();
-            x = new Rel(tok, x, rel());            
+            x = new Rel(tok, x, rel());
+            x->setType();          
         }
+        return x;
     }
+
     Expr* rel() {
         Expr* x = expr();
         switch (look->tag) {
-            case '<': case Tag::LE: case Tag::GE: case '>':
+            case '<': case Tag::LE: case Tag::GE: case '>': {
                 Token *tok = look;
                 move();
-                return new Rel(tok, x, expr());
+                Rel *r = new Rel(tok, x, expr());
+                r->setType();
+                return r;
+            }
             default:
                 return x;
         }
     }
+
     Expr* expr() {
         Expr *x = term();
         while (look->tag == '+' || look->tag == '-') {
             Token *tok = look; move(); x = new Arith(tok, x, term());
+            x->setType();
         }
         return x;
     }
+
     Expr* term() {
         Expr *x = unary();
         while (look->tag == '*' || look->tag == '/') {
             Token *tok = look; move(); x = new Arith(tok, x, unary());
+            x->setType();
         } 
         return x;
     }
+
     Expr* unary() {
         if (look->tag == '-') {
             move();
@@ -237,6 +260,7 @@ public:
             return new Not(tok, unary());
         } else return factor();
     }
+
     Expr* factor() {
         Expr *x = nullptr;
         switch (look->tag) {
@@ -255,12 +279,12 @@ public:
                 x = Constant::True;
                 move();
                 return x;
-            case Tag::FALSE:
+            case Tag::FALSE: 
                 x = Constant::False;
                 move();
                 return x;
-            case Tag::ID:
-                Id *id = top.get(look);
+            case Tag::ID: {
+                Id *id = top->get(look);
                 if (id == nullptr) {
                     error(look->toString() + " undeclared");
                 }
@@ -270,24 +294,27 @@ public:
                 } else {
                     return offset(id);
                 }
+            }
             default:
                 error("syntax error");
                 return x;
         }
     }
+
     Access* offset(Id *a) {
         Expr *i, *w, *t1, *t2, *loc;
         Type *type = a->type;
         match('['); i = boolean(); match(']');
         type = ((Array*) type)->of;
         w = new Constant(type->width);
+        t1 = new Arith(new Token('*'), i, w);
         loc = t1;
         while (look->tag == '[') {
             match('['); i = boolean(); match(']');
             type = ((Array*) type)->of;
             w = new Constant(type->width);
             t1 = new Arith(new Token('*'), i, w);
-            t2 = new Arith(new Token('+'), loc, w);
+            t2 = new Arith(new Token('+'), loc, t1);
             loc = t2;
         }
         return new Access(a, loc, type);

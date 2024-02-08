@@ -7,7 +7,7 @@
 class Rel : public Logical {
 public:
     Rel(Token *tok, Expr *x1, Expr *x2) : Logical(tok, x1, x2) {}
-    Type* check(Type *p1, Type *p2) {
+    Type* check(Type *p1, Type *p2) override {
         if (typeid(*p1) == typeid(Array) || typeid(*p2) == typeid(Array)) {
             return nullptr;
         } else if (p1 == p2) {

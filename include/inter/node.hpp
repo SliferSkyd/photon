@@ -2,6 +2,7 @@
 #define __NODE_HPP__
 
 #include <string>
+#include <cassert>
 #include <iostream>
 #include "../lexer/lexer.hpp"
 
@@ -11,12 +12,12 @@ public:
     Node() {
         lexline = Lexer::line;
     }
+    static int labels;
 
     void error(std::string s) {
         throw std::runtime_error("near line " + std::to_string(lexline) + ": " + s);
     }
 
-    static int labels;
     int newlabel() {
         return ++labels;
     }
@@ -29,5 +30,7 @@ public:
         std::cout << "\t" << s << std::endl;
     }
 };
+
+int Node::labels = 0;
 
 #endif
