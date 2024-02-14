@@ -3,6 +3,7 @@
 
 #include "stmt.hpp"
 #include "expr.hpp"
+#include "../cgen/cgenhelper.hpp"
 
 class Else : public Stmt {
 public:
@@ -20,8 +21,22 @@ public:
         int label1 = newlabel();
         int label2 = newlabel();
         expr->jumping(0, label2);
-        emitlabel(label1); stmt1->gen(label1, a); emit("goto L" + std::to_string(a));
+        emitlabel(label1); stmt1->gen(label1, a); 
+        // emit("goto L" + std::to_string(a));
+        CgenHelper::emitBranch("L" + std::to_string(a));
         emitlabel(label2); stmt2->gen(label2, a);
+    }
+    void code() {
+        int label1 = CgenHelper::newLabel();
+        int label2 = CgenHelper::newLabel();
+        expr->code();
+        CgenHelper::emitBeqz(CgenHelper::ACC, CgenHelper::getLabel(label1));
+        stmt1->code();
+        // emit("goto L" + std::to_string(label2));
+        CgenHelper::emitBranch("L" + std::to_string(label2));
+        CgenHelper::emitLabel(label1);
+        stmt2->code();
+        CgenHelper::emitLabel(label2);
     }
 };
 

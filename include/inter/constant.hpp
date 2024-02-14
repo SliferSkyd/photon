@@ -2,7 +2,6 @@
 #define __CONSTANT_HPP__
 
 #include "expr.hpp"
-
 class Constant : public Expr {
 public:
     Constant(Token *tok, Type *p) : Expr(tok, p) {}
@@ -12,11 +11,17 @@ public:
     
     void jumping(int t, int f) {
         if (this == True && t != 0) {
-            emit("goto L" + std::to_string(t));
+            // emit("goto L" + std::to_string(t));
+            CgenHelper::emitBranch("L" + std::to_string(t));
         } else if (this == False && f != 0) {
-            emit("goto L" + std::to_string(f));
+            // emit("goto L" + std::to_string(f));
+            CgenHelper::emitBranch("L" + std::to_string(f));
         }
     }
+
+    void code() {
+        CgenHelper::emitLoadImm(CgenHelper::ACC, op->toString());
+    }    
 };
 
 Constant *Constant::True = new Constant(Word::True, Type::Bool);

@@ -3,6 +3,7 @@
 
 #include "stmt.hpp"
 #include "expr.hpp"
+#include "../cgen/cgenhelper.hpp"
 
 class If : public Stmt {
 public:
@@ -20,6 +21,13 @@ public:
         expr->jumping(0, a);
         emitlabel(label);
         stmt->gen(label, a);
+    }
+    void code() {
+        int label = CgenHelper::newLabel();
+        expr->code();
+        CgenHelper::emitBeqz(CgenHelper::ACC, CgenHelper::getLabel(label));
+        stmt->code();
+        CgenHelper::emitLabel(label);
     }
 };
 

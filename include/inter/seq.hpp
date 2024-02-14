@@ -21,6 +21,10 @@ public:
             stmt2->gen(label, a);
         }
     }
+    void code() {
+        stmt1->code();
+        stmt2->code();
+    }
 };
 
 #endif

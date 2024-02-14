@@ -20,8 +20,31 @@ public:
     void jumping(int t, int f) {
         Expr *a = expr1->reduce();
         Expr *b = expr2->reduce();
-        std::string test = a->toString() + " " + op->toString() + " " + b->toString();
-        emitJumps(test, t, f);
+        // std::string test = a->toString() + " " + op->toString() + " " + b->toString();
+        
+
+        // emitJumps(test, t, f);
+    }
+    void code() {
+        expr1->code();
+        CgenHelper::emitPush(CgenHelper::ACC);
+        expr2->code();
+        CgenHelper::emitPop(CgenHelper::T1);
+        if (op->toString() == "==") {
+            CgenHelper::emitSeq(CgenHelper::ACC, CgenHelper::T1, CgenHelper::ACC);  
+        } else if (op->toString() == "!=") {
+            CgenHelper::emitSne(CgenHelper::ACC, CgenHelper::T1, CgenHelper::ACC);
+        } else if (op->toString() == "<") {
+            CgenHelper::emitSlt(CgenHelper::ACC, CgenHelper::T1, CgenHelper::ACC);
+        } else if (op->toString() == ">") {
+            CgenHelper::emitSgt(CgenHelper::ACC, CgenHelper::T1, CgenHelper::ACC);
+        } else if (op->toString() == "<=") {
+            CgenHelper::emitSle(CgenHelper::ACC, CgenHelper::T1, CgenHelper::ACC);
+        } else if (op->toString() == ">=") {
+            CgenHelper::emitSge(CgenHelper::ACC, CgenHelper::T1, CgenHelper::ACC);
+        } else {
+            error("unknown operator");
+        }
     }
 };
 

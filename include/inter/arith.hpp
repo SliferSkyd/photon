@@ -24,6 +24,22 @@ public:
     std::string toString() {
         return expr1->toString() + " " + op->toString() + " " + expr2->toString();
     }
+
+    void code() {
+        expr1->code();
+        CgenHelper::emitPush(CgenHelper::ACC);
+        expr2->code();
+        CgenHelper::emitPop(CgenHelper::T1);
+        if (op->toString() == "+") {
+            CgenHelper::emitAdd(CgenHelper::ACC, CgenHelper::ACC, CgenHelper::T1);        
+        } else if (op->toString() == "-") {
+            CgenHelper::emitSub(CgenHelper::ACC, CgenHelper::ACC, CgenHelper::T1);
+        } else if (op->toString() == "*") {
+            CgenHelper::emitMul(CgenHelper::ACC, CgenHelper::ACC, CgenHelper::T1);
+        } else {
+            error("unknown operator");
+        }
+    }
 };
 
 #endif

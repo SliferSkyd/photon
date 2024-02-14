@@ -9,6 +9,7 @@ public:
     static Stmt *Null, *Enclosing;
     Stmt() {}
     virtual void gen(int b, int a) {}
+    virtual void code() {}
 };
 
 Stmt *Stmt::Null = new Stmt();

@@ -8,7 +8,14 @@
 class Id : public Expr {
 public:
     int offset;
+    bool isDefined = false;
     Id(Word *id, Type *p, int b) : Expr(id, p), offset(b) {} 
+    void code() {
+        if (!isDefined) {
+            CgenHelper::emitNumberConstant(op->toString(), "0");
+            isDefined = true;
+        }
+    }
 };
 
 #endif

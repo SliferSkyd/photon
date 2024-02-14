@@ -41,6 +41,12 @@ public:
     void gen(int b, int a) {
         emit(id->toString() + " = " + expr->gen()->toString());
     }
+
+    void code() {
+        id->code();
+        expr->code();
+        CgenHelper::emitStore(CgenHelper::ACC, id->op->toString());
+    }
 };
 
 #endif

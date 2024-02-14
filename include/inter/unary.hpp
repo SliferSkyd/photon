@@ -18,6 +18,15 @@ public:
     std::string toString() {
         return op->toString() + " " + expr->toString();
     }
+
+    void code() {
+        expr->code();
+        if (op->toString() == "-") {
+            CgenHelper::emitNeg(CgenHelper::ACC, CgenHelper::ACC);
+        } else if (op->toString() == "!") {
+            CgenHelper::emitNor(CgenHelper::ACC, CgenHelper::ACC, CgenHelper::ZERO);
+        }
+    }
 };
 
 #endif

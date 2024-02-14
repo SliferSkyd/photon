@@ -3,7 +3,7 @@
 
 #include "stmt.hpp"
 #include "expr.hpp"
-
+#include "../cgen/cgenhelper.hpp"
 class While : public Stmt {
 public:
     Expr *expr;
@@ -25,7 +25,18 @@ public:
         int label = newlabel();
         emitlabel(label);
         stmt->gen(label, b);
-        emit("goto L" + std::to_string(b));
+        // emit("goto L" + std::to_string(b));
+    }
+
+    void code() {
+        int before = CgenHelper::newLabel();
+        int after = CgenHelper::newLabel();
+        CgenHelper::emitLabel(before);
+        expr->code();
+        CgenHelper::emitBeqz(CgenHelper::ACC, CgenHelper::getLabel(after));
+        stmt->code();
+        CgenHelper::emitBranch(CgenHelper::getLabel(before));
+        CgenHelper::emitLabel(after);
     }
 };
 

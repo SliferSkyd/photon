@@ -58,12 +58,14 @@ public:
     }
 
     void program() {
+        CgenHelper::emitStartProgram();
         Stmt *s = block();
-        int begin = s->newlabel();
-        int after = s->newlabel();
-        s->emitlabel(begin);
-        s->gen(begin, after);
-        s->emitlabel(after);
+        int begin = CgenHelper::newLabel();
+        int after = CgenHelper::newLabel();       
+        CgenHelper::emitLabel(begin);
+        s->code();
+        CgenHelper::emitLabel(after);
+        CgenHelper::emitEndProgram();
     }
 
     Stmt* block() {
@@ -134,6 +136,9 @@ public:
                 Type *p = type();
                 Token *tok = look;
                 match(Tag::ID);
+                if (top->get(tok) != nullptr) {
+                    error(tok->toString() + " redeclared");
+                }
                 Id *id = new Id((Word*)tok, p, used);
                 top->put(tok, id);
                 used = used + p->width;
