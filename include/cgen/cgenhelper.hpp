@@ -21,8 +21,10 @@ namespace CgenHelper {
     const std::string ZERO = "$zero";		// Zero register 
     const std::string ACC = "$a0";		// Accumulator 
     const std::string A1  = "$a1";		// For arguments to prim funcs 
-    const std::string SELF= "$s0";		// Ptr to self (callee saves) 
-    const std::string S1=   "$s1";		// Dont know what S1 does but it is used in cool generated code and it 
+    const std::string SELF = "$s0";		// Ptr to self (callee saves) 
+    const std::string S1 =   "$s1";		// Dont know what S1 does but it is used in cool generated code and it 
+    const std::string V0 = "$v0";		// Return value
+
     // cannot be replaced by other regs
     const std::string T1  = "$t1";		// Temporary 1 
     const std::string T2  = "$t2";            // Temporary 2 
@@ -528,6 +530,17 @@ namespace CgenHelper {
 
     void emitEndProgram() {
         emit("li $v0 10");
+        emit("syscall");
+    }
+
+    void emitReadInt(std::string variable) {
+        emitLoadImm(V0, "5");
+        emit("syscall");
+        emitStore(V0, variable);
+    }
+
+    void emitPrintInt() {
+        emitLoadImm(V0, "1");
         emit("syscall");
     }
 }

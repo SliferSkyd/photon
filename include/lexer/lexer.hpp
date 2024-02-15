@@ -36,6 +36,9 @@ public:
         reserve(new Word("do", Tag::DO));
         reserve(new Word("break", Tag::BREAK));
         reserve(new Word("for", Tag::FOR));
+        reserve(new Word("read", Tag::READ));
+        reserve(new Word("print", Tag::PRINT));
+
         reserve(Word::True);
         reserve(Word::False);
         reserve(Type::Int);

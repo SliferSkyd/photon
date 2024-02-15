@@ -14,6 +14,8 @@ public:
         if (!isDefined) {
             CgenHelper::emitNumberConstant(op->toString(), "0");
             isDefined = true;
+        } else {
+            CgenHelper::emitLoad(CgenHelper::ACC, op->toString());
         }
     }
 };

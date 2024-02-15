@@ -21,6 +21,8 @@ public:
         NE,
         NUM,
         OR,
+        PRINT,
+        READ,
         REAL,
         TEMP,
         TRUE,

@@ -29,6 +29,7 @@
 #include "../inter/arith.hpp"
 #include "../inter/else.hpp"
 #include "../inter/for.hpp"
+#include "../inter/io.hpp"
 
 class Parser {
     Lexer *lex;
@@ -132,6 +133,20 @@ public:
             case ';':
                 move();
                 return Stmt::Null;
+            case Tag::PRINT: {
+                move();
+                match('(');
+                Expr* e = expr();
+                match(')');
+                return new IO(e, IO::IOType::OUTPUT);
+            }
+            case Tag::READ: {
+                move();
+                match('(');
+                Expr* e = expr();
+                match(')');
+                return new IO(e, IO::IOType::INPUT);
+            }
             case Tag::BASIC: {
                 Type *p = type();
                 Token *tok = look;
