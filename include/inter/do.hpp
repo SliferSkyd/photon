@@ -20,12 +20,14 @@ public:
             expr->error("boolean required in do");
         }
     }
-    void gen(int b, int a) {
-        after = a;
-        int label = newlabel();
-        stmt->gen(b, label);
-        emitlabel(label);
-        expr->jumping(b, 0);
+    void code() {
+        int before = CgenHelper::newLabel();
+        int after = CgenHelper::newLabel();
+        CgenHelper::emitLabel(before);
+        stmt->code();
+        expr->code();
+        CgenHelper::emitBnez(CgenHelper::ACC, CgenHelper::getLabel(before));
+        CgenHelper::emitLabel(after);
     }
 };
 

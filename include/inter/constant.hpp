@@ -8,19 +8,15 @@ public:
     Constant(int i) : Expr(new Num(i), Type::Int) {}
     static Constant *True;
     static Constant *False;
-    
-    void jumping(int t, int f) {
-        if (this == True && t != 0) {
-            // emit("goto L" + std::to_string(t));
-            CgenHelper::emitBranch("L" + std::to_string(t));
-        } else if (this == False && f != 0) {
-            // emit("goto L" + std::to_string(f));
-            CgenHelper::emitBranch("L" + std::to_string(f));
-        }
-    }
 
     void code() {
-        CgenHelper::emitLoadImm(CgenHelper::ACC, op->toString());
+        if (this == Constant::True) {
+            CgenHelper::emitLoadImm(CgenHelper::ACC, "1");
+        } else if (this == Constant::False) {
+            CgenHelper::emitLoadImm(CgenHelper::ACC, "0");
+        } else {
+            CgenHelper::emitLoadImm(CgenHelper::ACC, op->toString());
+        }
     }    
 };
 

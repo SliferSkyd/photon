@@ -8,7 +8,7 @@ class Logical : public Expr {
 public:
     Expr *expr1, *expr2;
     Logical(Token *tok, Expr *x1, Expr *x2) : Expr(tok, nullptr), expr1(x1), expr2(x2) {}
-    void setType() {
+    virtual void setType() {
         type = check(expr1->type, expr2->type);
         if (type == nullptr) {
             error("type error");
@@ -21,20 +21,26 @@ public:
             return nullptr;
         }
     }
-    Expr* gen() {
-        int f = newlabel(), a = newlabel();
-        Temp *temp = new Temp(type);
-        this->jumping(0, f);
-        emit(temp->toString() + " = true");
-        emit("goto L" + std::to_string(a));
-        emitlabel(f); 
-        emit(temp->toString() + " = false");
-        emitlabel(a);
-        return temp;
-    }
 
     std::string toString() {
         return expr1->toString() + " " + op->toString() + " " + expr2->toString();
+    }
+
+    virtual void code() {
+        expr1->code();
+        if (expr2 != nullptr) {
+            CgenHelper::emitPush(CgenHelper::ACC);
+            expr2->code();
+            CgenHelper::emitPop(CgenHelper::T1);
+        }
+        if (op->tag == Tag::AND) {
+            CgenHelper::emitAnd(CgenHelper::ACC, CgenHelper::T1, CgenHelper::ACC);
+        } else if (op->tag == Tag::OR) {
+            CgenHelper::emitOr(CgenHelper::ACC, CgenHelper::T1, CgenHelper::ACC);
+        } else if (op->tag == '!') {
+            CgenHelper::emitNot(CgenHelper::ACC, CgenHelper::ACC);
+            CgenHelper::emitAnd(CgenHelper::ACC, CgenHelper::ACC, "1");
+        }
     }
 };
 

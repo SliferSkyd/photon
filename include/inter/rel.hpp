@@ -16,15 +16,6 @@ public:
             return nullptr;
         }
     }
-
-    void jumping(int t, int f) {
-        Expr *a = expr1->reduce();
-        Expr *b = expr2->reduce();
-        // std::string test = a->toString() + " " + op->toString() + " " + b->toString();
-        
-
-        // emitJumps(test, t, f);
-    }
     void code() {
         expr1->code();
         CgenHelper::emitPush(CgenHelper::ACC);

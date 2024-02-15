@@ -300,12 +300,17 @@ public:
     }
 
     Expr* unary() {
+        Expr* ret;
         if (look->tag == '-') {
             move();
-            return new Unary(Word::Minus, unary());
+            ret = new Unary(Word::Minus, unary());
+            ret->setType();
+            return ret;
         } else if (look->tag == '!') {
-            Token *tok = look; move(); 
-            return new Not(tok, unary());
+            Token *tok = look; move();
+            ret = new Not(tok, unary());
+            ret->setType();
+            return ret;
         } else return factor();
     }
 

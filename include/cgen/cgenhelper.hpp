@@ -57,10 +57,14 @@ namespace CgenHelper {
     const std::string BRANCH  = "\tb\t";
     const std::string BEQ     = "\tbeq\t";
     const std::string BNE     = "\tbne\t";
+    const std::string BNEZ    = "\tbnez\t";
     const std::string BLEQ    = "\tble\t";
     const std::string BLT     = "\tblt\t";
     const std::string BGT     = "\tbgt\t";
     
+    const std::string AND    = "\tand\t";
+    const std::string OR     = "\tor\t";
+    const std::string NOT    = "\tnot\t";
     const std::string NOR     = "\tnor\t";
 
     const std::string SEQ     = "\tseq\t";
@@ -88,7 +92,7 @@ namespace CgenHelper {
      * @param dest_reg the destination register
      * @param offset the word offset from source register
      * @param source_reg the source register
-     * @param s the output stream
+      
      * */
     void emitLoad(const std::string& dest_reg, int offset, const std::string& source_reg) {
         std::cout << LW << dest_reg << " " << offset * WORD_SIZE << "(" << source_reg << ")" << std::endl;
@@ -97,7 +101,7 @@ namespace CgenHelper {
     /** Emits an LW instruction without the offset.
      * @param dest_reg the destination register
      * @param source_reg the source register
-     * @param s the output stream
+      
     */
     void emitLoad(const std::string& dest_reg, const std::string& source_reg) {
         std::cout << LW << dest_reg << " " << source_reg << std::endl;
@@ -107,7 +111,7 @@ namespace CgenHelper {
      * @param dest_reg the destination register
      * @param offset the word offset from source register
      * @param source_reg the source register
-     * @param s the output stream
+      
      * */
     void emitStore(const std::string& dest_reg, int offset, const std::string& source_reg) {
         std::cout << SW << dest_reg << " " << offset * WORD_SIZE << "(" << source_reg << ")" << std::endl;
@@ -116,7 +120,7 @@ namespace CgenHelper {
     /** Emits an SW instruction without the offset.
      * @param dest_reg the destination register
      * @param source_reg the source register
-     * @param s the output stream
+      
      * */
     void emitStore(const std::string& dest_reg, const std::string& source_reg) {
         std::cout << SW << dest_reg << " " << source_reg << std::endl;
@@ -125,7 +129,7 @@ namespace CgenHelper {
     /** Emits the LI instruction.
      * @param dest_reg the destination register
      * @param val the value
-     * @param s the output stream
+      
      * */
     void emitLoadImm(const std::string& dest_reg, std::string val) {
         std::cout << LI << dest_reg << " " << val << std::endl;
@@ -134,7 +138,7 @@ namespace CgenHelper {
     /** Emits an LA instruction.
      * @param dest_reg the destination register
      * @param address the address from which a word is loaded
-     * @param s the output stream
+      
      * */
     void emitLoadAddress(const std::string& dest_reg, const std::string& address) {
         std::cout << LA << dest_reg << " " << address << std::endl;
@@ -142,7 +146,7 @@ namespace CgenHelper {
 
     /** Emits an LA instruction without the address part.
      * @param dest_reg the destination register
-     * @param s the output stream
+      
      * */
     void emitPartialLoadAddress(const std::string& dest_reg) {
         std::cout << LA << dest_reg << " ";
@@ -151,7 +155,7 @@ namespace CgenHelper {
     /** Emits a MOVE instruction.
      * @param dest_reg the destination register
      * @param source_reg the source register
-     * @param s the output stream
+      
      * */
     void emitMove(const std::string& dest_reg, const std::string& source_reg) {
         std::cout << MOVE << dest_reg << " " << source_reg << std::endl;
@@ -160,7 +164,7 @@ namespace CgenHelper {
     /** Emits a NEG instruction.
      * @param dest_reg the destination register
      * @param source_reg the source register
-     * @param s the output stream
+      
      * */
     void emitNeg(const std::string& dest_reg, const std::string& source_reg) {
         std::cout << NEG << dest_reg << " " << source_reg << std::endl;
@@ -170,7 +174,7 @@ namespace CgenHelper {
      * @param dest_reg the destination register
      * @param source_reg1 the first source register
      * @param source_reg2 the second source register
-     * @param s the output stream
+      
     */
 
     void emitNor(const std::string& dest_reg, const std::string& source_reg1, const std::string& source_reg2) {
@@ -181,7 +185,7 @@ namespace CgenHelper {
      * @param dest_reg the destination register
      * @param source_reg1 the first source register
      * @param source_reg2 the second source register
-     * @param s the output stream
+      
      * */
     void emitAdd(const std::string& dest_reg, const std::string& source_reg1, const std::string& source_reg2) {
         std::cout << ADD << dest_reg << " " << source_reg1 << " " << source_reg2 << std::endl;
@@ -191,7 +195,7 @@ namespace CgenHelper {
      * @param dest_reg the destination register
      * @param source_reg the source register
      * @param imm the immediate value
-     * @param s the output stream
+      
      * */    
     void emitAddImm(const std::string& dest_reg, const std::string& source_reg, int imm) {
         std::cout << ADDI << dest_reg << " " << source_reg << " " << imm << std::endl;
@@ -201,7 +205,7 @@ namespace CgenHelper {
      * @param dest_reg the destination register
      * @param source_reg1 the first source register
      * @param source_reg2 the second source register
-     * @param s the output stream
+      
      * */
     void emitAddu(const std::string& dest_reg, const std::string& source_reg1, const std::string& source_reg2) {
         std::cout << ADDU << dest_reg << " " << source_reg1 << " " << source_reg2 << std::endl;
@@ -211,7 +215,7 @@ namespace CgenHelper {
      * @param dest_reg the destination register
      * @param source_reg the source register
      * @param imm the immediate value
-     * @param s the output stream
+      
      * */
     void emitAddiu(const std::string& dest_reg, const std::string& source_reg, int imm) {
         std::cout << ADDIU << dest_reg << " " << source_reg << " " << imm << std::endl;
@@ -221,7 +225,7 @@ namespace CgenHelper {
      * @param dest_reg the destination register
      * @param source_reg1 the first source register
      * @param source_reg2 the second source register
-     * @param s the output stream
+      
      * */
     void emitDiv(const std::string& dest_reg, const std::string& source_reg1, const std::string& source_reg2) {
         std::cout << DIV << dest_reg << " " << source_reg1 << " " << source_reg2 << std::endl;
@@ -231,7 +235,7 @@ namespace CgenHelper {
      * @param dest_reg the destination register
      * @param source_reg1 the first source register
      * @param source_reg2 the second source register
-     * @param s the output stream
+      
      * */
     void emitMul(const std::string& dest_reg, const std::string& source_reg1, const std::string& source_reg2) {
         std::cout << MUL << dest_reg << " " << source_reg1 << " " << source_reg2 << std::endl;
@@ -241,7 +245,6 @@ namespace CgenHelper {
      * @param dest_reg the destination register
      * @param source_reg1 the first source register
      * @param source_reg2 the second source register
-     * @param s the output stream
      * */
     void emitSub(const std::string& dest_reg, const std::string& source_reg1, const std::string& source_reg2) {
         std::cout << SUB << dest_reg << " " << source_reg1 << " " << source_reg2 << std::endl;
@@ -251,7 +254,6 @@ namespace CgenHelper {
      * @param dest_reg the destination register
      * @param source_reg the source register
      * @param num the number of bits to shift
-     * @param s the output stream
      * */
     void emitSll(const std::string& dest_reg, const std::string& source_reg, int num) {
         std::cout << SLL << dest_reg << " " << source_reg << " " << num << std::endl;
@@ -260,15 +262,21 @@ namespace CgenHelper {
     /** Emits a BEQZ instruction.
      * @param source_reg the source register
      * @param label the label to branch to
-     * @param s the output stream
      * */
     void emitBeqz(const std::string& source_reg, const std::string& label) {
         std::cout << BEQZ << source_reg << " " << label << std::endl;
     }
 
+    /** Emits a BNEZ instruction.
+     * @param source_reg the source register
+     * @param label the label to branch to
+    */
+    void emitBnez(const std::string& source_reg, const std::string& label) {
+        std::cout << BNEZ << source_reg << " " << label << std::endl;
+    }
+
     /** Emits a branch to the given label.
      * @param label the label to branch to
-     * @param s the output stream
      * */
     void emitBranch(const std::string& label) {
         std::cout << BRANCH << label << std::endl;
@@ -278,7 +286,6 @@ namespace CgenHelper {
      * @param reg1 the first register
      * @param reg2 the second register
      * @param label the label to branch to
-     * @param s the output stream
      * */
     void emitBeq(const std::string& reg1, const std::string& reg2, const std::string& label) {
         std::cout << BEQ << reg1 << " " << reg2 << " " << label << std::endl;
@@ -288,7 +295,6 @@ namespace CgenHelper {
      * @param reg1 the first register
      * @param reg2 the second register
      * @param label the label to branch to
-     * @param s the output stream
      * */
     void emitBne(const std::string& reg1, const std::string& reg2, const std::string& label) {
         std::cout << BNE << reg1 << " " << reg2 << " " << label << std::endl;
@@ -298,7 +304,7 @@ namespace CgenHelper {
      * @param reg1 the first register
      * @param reg2 the second register
      * @param label the label to branch to
-     * @param s the output stream
+      
      * */
     void emitBleq(const std::string& reg1, const std::string& reg2, const std::string& label) {
         std::cout << BLEQ << reg1 << " " << reg2 << " " << label << std::endl;
@@ -308,7 +314,7 @@ namespace CgenHelper {
      * @param reg1 the first register
      * @param reg2 the second register
      * @param label the label to branch to
-     * @param s the output stream
+      
      * */
     void emitBlt(const std::string& reg1, const std::string& reg2, const std::string& label) {
         std::cout << BLT << reg1 << " " << reg2 << " " << label << std::endl;
@@ -318,7 +324,7 @@ namespace CgenHelper {
      * @param reg1 the first register
      * @param reg2 the second register
      * @param label the label to branch to
-     * @param s the output stream
+      
      * */
     void emitBgt(const std::string& reg1, const std::string& reg2, const std::string& label) {
         std::cout << BGT << reg1 << " " << reg2 << " " << label << std::endl;
@@ -326,7 +332,7 @@ namespace CgenHelper {
 
     /** Emits a JALR instruction.
      * @param dest_reg the destination register
-     * @param s the output stream
+      
      * */
     void emitJalr(const std::string& dest_reg) {
         std::cout << JALR << dest_reg << std::endl;
@@ -334,14 +340,14 @@ namespace CgenHelper {
 
     /** Emits a JAL instruction.
      * @param dest the destination address
-     * @param s the output stream
+      
      * */
     void emitJal(const std::string& dest) {
         std::cout << JAL << dest << std::endl;
     }
 
     /** Emits a RET instruction.
-     * @param s the output stream
+      
      * */
     void emitRet() {
         std::cout << RET << std::endl;
@@ -349,7 +355,7 @@ namespace CgenHelper {
 
     /** Emits a sequence of instructions to push a register onto the stack.
      * @param reg the register to push
-     * @param s the output stream
+      
      * */
     void emitPush(const std::string& reg) {
         emitStore(reg, 0, SP);
@@ -358,7 +364,7 @@ namespace CgenHelper {
 
     /** Emits a sequence of instructions to push a register onto the stack.
      * @param reg the register to push
-     * @param s the output stream
+      
      * */
     void emitPop(const std::string& reg) {
         emitLoad(reg, 1, SP);
@@ -368,7 +374,7 @@ namespace CgenHelper {
     /** Emits a sequence of instructions to store a register in a stack location.
      * @param reg the register to store
      * @param offset the offset from the stack pointer
-     * @param s the output stream
+      
      * */
     void emitStoreStack(const std::string& reg, int offset) {
         emitStore(reg, offset, SP);
@@ -377,7 +383,7 @@ namespace CgenHelper {
     /** Emits a sequence of instructions to load a register from a stack location.
      * @param reg the register to load
      * @param offset the offset from the stack pointer
-     * @param s the output stream
+      
      * */
     void emitLoadStack(const std::string& reg, int offset) {
         emitLoad(reg, offset, SP);
@@ -389,14 +395,14 @@ namespace CgenHelper {
 
     /** Emits a label
      * @param label the label number
-     * @param s the output stream
+      
      * */
     void emitLabel(int label) {
         std::cout << getLabel(label) << LABEL;
     }   
 
     /** Emits a data segment directive
-     * @param s the output stream
+      
      * */
     void emitData() {
         std::cout << "\t.data\n";
@@ -404,7 +410,7 @@ namespace CgenHelper {
     }
 
     /** Emits a text segment directive
-     * @param s the output stream
+      
      * */
     void emitText() {
         std::cout << "\t.text\n";
@@ -413,7 +419,7 @@ namespace CgenHelper {
     /** Emits a directive to allocate space in the data segment
      * @param var the name of the variable
      * @param numBytes the number of bytes to allocate
-     * @param s the output stream
+      
      * */
     void emitSpace(const std::string& var, int numBytes) {
         std::cout << var << ":\t.space " << numBytes << std::endl;
@@ -421,7 +427,7 @@ namespace CgenHelper {
 
     /** Emits a directive to allocate a global variable
      * @param var the name of the variable
-     * @param s the output stream
+      
      * */
     void emitGlobal(const std::string& var) {
         std::cout << GLOBAL << var << std::endl;
@@ -429,7 +435,7 @@ namespace CgenHelper {
 
     /** Emits a directive to define a label
      * @param label the name of the label
-     * @param s the output stream
+      
      * */
     void emitLabel(const std::string& label) {
         std::cout << label << LABEL;
@@ -443,7 +449,7 @@ namespace CgenHelper {
      * @param dest_reg the destination register
      * @param source_reg1 the first source register
      * @param source_reg2 the second source register
-     * @param s the output stream
+      
     */
     void emitSeq(const std::string& dest_reg, const std::string& source_reg1, const std::string& source_reg2) {
         std::cout << SEQ << dest_reg << " " << source_reg1 << " " << source_reg2 << std::endl;
@@ -453,7 +459,7 @@ namespace CgenHelper {
      * @param dest_reg the destination register
      * @param source_reg1 the first source register
      * @param source_reg2 the second source register
-     * @param s the output stream
+      
     */
     void emitSne(const std::string& dest_reg, const std::string& source_reg1, const std::string& source_reg2) {
         std::cout << SNE << dest_reg << " " << source_reg1 << " " << source_reg2 << std::endl;
@@ -463,7 +469,7 @@ namespace CgenHelper {
      * @param dest_reg the destination register
      * @param source_reg1 the first source register
      * @param source_reg2 the second source register
-     * @param s the output stream
+      
     */
     void emitSge(const std::string& dest_reg, const std::string& source_reg1, const std::string& source_reg2) {
         std::cout << SGE << dest_reg << " " << source_reg1 << " " << source_reg2 << std::endl;
@@ -473,7 +479,7 @@ namespace CgenHelper {
      * @param dest_reg the destination register
      * @param source_reg1 the first source register
      * @param source_reg2 the second source register
-     * @param s the output stream
+      
     */
     void emitSgt(const std::string& dest_reg, const std::string& source_reg1, const std::string& source_reg2) {
         std::cout << SGT << dest_reg << " " << source_reg1 << " " << source_reg2 << std::endl;
@@ -483,7 +489,7 @@ namespace CgenHelper {
      * @param dest_reg the destination register
      * @param source_reg1 the first source register
      * @param source_reg2 the second source register
-     * @param s the output stream
+      
     */
     void emitSle(const std::string& dest_reg, const std::string& source_reg1, const std::string& source_reg2) {
         std::cout << SLE << dest_reg << " " << source_reg1 << " " << source_reg2 << std::endl;
@@ -493,7 +499,7 @@ namespace CgenHelper {
      * @param dest_reg the destination register
      * @param source_reg1 the first source register
      * @param source_reg2 the second source register
-     * @param s the output stream
+      
     */
     void emitSlt(const std::string& dest_reg, const std::string& source_reg1, const std::string& source_reg2) {
         std::cout << SLT << dest_reg << " " << source_reg1 << " " << source_reg2 << std::endl;
@@ -501,21 +507,19 @@ namespace CgenHelper {
 
     /** Emit a string constant definition.
      * @param str the string
-     * @param s the output stream
+      
      * @param value the string value
     */
     void emitStringConstant(const std::string& str, const std::string& value) {
-        emitGlobal(str);
         emitData();
-        std::cout << ALIGN;
-        std::cout << str << LABEL;
-        std::cout << WORD << value << std::endl;
+        std::cout << str << ":" << "\t.asciiz " << value << std::endl;
+        emitText();
     }
 
     /** Emits a number constant definition. 
      * @param str the string
      * @param value the number value
-     * @param s the output stream
+      
     */
     void emitNumberConstant(const std::string& str, const std::string& value) {
         emitData();
@@ -523,25 +527,59 @@ namespace CgenHelper {
         emitText();
     }
 
+    void emitDeclareConstants() {
+        emitStringConstant("endl", "\"\\n\"");
+        emitStringConstant("space", "\" \"");
+        emitData();
+        emit("string_space:\t.space 1024");
+        emitText();
+    }
+
     void emitStartProgram() {
         emitGlobal("main");
         emitLabel("main");
+        emitDeclareConstants();
     }
 
     void emitEndProgram() {
-        emit("li $v0 10");
-        emit("syscall");
+        emit("\tli $v0 10");
+        emit("\tsyscall");
     }
 
     void emitReadInt(std::string variable) {
         emitLoadImm(V0, "5");
-        emit("syscall");
+        emit("\tsyscall");
         emitStore(V0, variable);
     }
 
     void emitPrintInt() {
         emitLoadImm(V0, "1");
-        emit("syscall");
+        emit("\tsyscall");
+    }
+
+    void emitPrintString(std::string variable) {
+        emitLoadImm(V0, "4");
+        emitLoadAddress(A1, variable);
+        emit("\tsyscall");
+    }
+
+    void emitReadString(std::string variable, int length) {
+        emitLoadImm(V0, "8");
+        emitLoadImm(A1, std::to_string(length));
+        emit("\tsyscall");
+        emitStore(V0, variable);
+    }
+
+    void emitAnd(std::string dest, std::string source1, std::string source2) {
+        std::cout << AND << dest << " " << source1 << " " << source2 << std::endl;
+    }
+
+    void emitOr(std::string dest, std::string source1, std::string source2) {
+        std::cout << OR << dest << " " << source1 << " " << source2 << std::endl;
+    }
+
+    void emitNot(std::string dest, std::string source) {
+        std::cout << NOT << dest << " " << source << std::endl;
     }
 }
 
